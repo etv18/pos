@@ -1,11 +1,13 @@
 package com.tavarlabs.pos.services.impl;
 
-import com.tavarlabs.pos.dtos.CreateProductRequest;
-import com.tavarlabs.pos.dtos.ProductDto;
+import com.tavarlabs.pos.dtos.product.CreateProductRequest;
+import com.tavarlabs.pos.dtos.product.ProductDto;
+import com.tavarlabs.pos.dtos.product.UpdateProductRequest;
 import com.tavarlabs.pos.entity.Product;
 import com.tavarlabs.pos.mappers.ProductMapper;
 import com.tavarlabs.pos.repositories.ProductRepository;
 import com.tavarlabs.pos.services.ProductService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,31 @@ public class ProductServiceImpl implements ProductService {
         newProduct.setPrice(createProductRequest.getPrice());
 
         return productMapper.toDto(productRepository.save(newProduct));
+    }
+
+    @Override
+    public ProductDto updateProduct(String code, UpdateProductRequest updateProductRequest) {
+        Product savedProduct = productRepository.findByCode(code)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found. code = " + code));
+
+        if (!savedProduct.getName().equalsIgnoreCase(updateProductRequest.getName()))
+            savedProduct.setName(updateProductRequest.getName());
+
+        if(savedProduct.getStock() != updateProductRequest.getStock())
+            savedProduct.setStock(updateProductRequest.getStock());
+
+        double epsilon = 0.0001;
+        if(Double.compare(savedProduct.getPrice(), updateProductRequest.getPrice()) != epsilon)
+            savedProduct.setPrice(updateProductRequest.getPrice());
+
+        return productMapper.toDto(productRepository.save(savedProduct));
+    }
+
+    @Override
+    public void deleteProduct(String code) {
+        Product product = productRepository.findByCode(code)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found. code = " + code));
+        productRepository.delete(product);
     }
 
     public String generateProductCode() {

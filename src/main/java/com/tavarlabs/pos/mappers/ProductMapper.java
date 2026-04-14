@@ -1,6 +1,6 @@
 package com.tavarlabs.pos.mappers;
 
-import com.tavarlabs.pos.dtos.ProductDto;
+import com.tavarlabs.pos.dtos.product.ProductDto;
 import com.tavarlabs.pos.entity.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
