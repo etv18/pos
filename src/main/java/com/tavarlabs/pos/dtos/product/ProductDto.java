@@ -1,6 +1,5 @@
-package com.tavarlabs.pos.dtos;
+package com.tavarlabs.pos.dtos.product;
 
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
