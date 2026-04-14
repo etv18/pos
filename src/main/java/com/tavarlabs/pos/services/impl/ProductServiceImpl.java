@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Random;
 
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public ProductDto createProduct(CreateProductRequest createProductRequest) {
+    public Product createProduct(CreateProductRequest createProductRequest) {
         Product newProduct = new Product();
 
         newProduct.setName(createProductRequest.getName());
@@ -31,11 +32,11 @@ public class ProductServiceImpl implements ProductService {
         newProduct.setStock(createProductRequest.getStock());
         newProduct.setPrice(createProductRequest.getPrice());
 
-        return productMapper.toDto(productRepository.save(newProduct));
+        return productRepository.save(newProduct);
     }
 
     @Override
-    public ProductDto updateProduct(String code, UpdateProductRequest updateProductRequest) {
+    public Product updateProduct(String code, UpdateProductRequest updateProductRequest) {
         Product savedProduct = productRepository.findByCode(code)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found. code = " + code));
 
@@ -49,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
         if(Double.compare(savedProduct.getPrice(), updateProductRequest.getPrice()) != epsilon)
             savedProduct.setPrice(updateProductRequest.getPrice());
 
-        return productMapper.toDto(productRepository.save(savedProduct));
+        return productRepository.save(savedProduct);
     }
 
     @Override
@@ -57,6 +58,19 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findByCode(code)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found. code = " + code));
         productRepository.delete(product);
+    }
+
+    @Override
+    public List<Product> listProducts() {
+        List<Product> products = productRepository.findAll();
+        return products;
+    }
+
+    @Override
+    public Product getProduct(String code) {
+        Product product = productRepository.findByCode(code)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found. code = " + code));
+        return product;
     }
 
     public String generateProductCode() {
