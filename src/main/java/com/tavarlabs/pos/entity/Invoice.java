@@ -20,6 +20,9 @@ public class Invoice {
     private Long id;
 
     @Column(nullable = false)
+    private String code;
+
+    @Column(nullable = false)
     private String clientName;
 
     @Column(nullable = false)
@@ -33,7 +36,7 @@ public class Invoice {
     * "mappedBy" must match the field name in InvoiceLine class.
     * */
     @OneToMany(mappedBy = "invoice")
-    List<InvoiceLine> lines;
+    private List<InvoiceLine> lines;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
