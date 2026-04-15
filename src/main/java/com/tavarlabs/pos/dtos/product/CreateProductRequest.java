@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class CreateProductRequest {
 
     @NotBlank(message = "Product name is required") // Annotations just for integers
-    @Pattern(regexp = "^[\\w\\s-]+$", message = "Category name can only contain letters, numbers, spaces, and hyphens")
+    @Pattern(regexp = "^[\\w\\s-]+$", message = "Product name can only contain letters, numbers, spaces, and hyphens")
     private String name;
 
     @NotNull(message = "Stock is required")
