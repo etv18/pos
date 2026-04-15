@@ -13,6 +13,5 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     // If duplicated invoices show up at DISTINCT after the SELECT statement
     @Query("SELECT inv FROM Invoice inv LEFT JOIN FETCH inv.lines")
     List<Invoice> findAllWithLines();
-
-
+    boolean existsByCode(String code);
 }
