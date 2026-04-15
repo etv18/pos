@@ -18,7 +18,7 @@ public interface InvoiceMapper {
         if(invoice.getLines() == null) return 0;
         double result = 0;
         for(InvoiceLine line : invoice.getLines()){
-            result += invoice.getTotal();
+            result += line.getProduct().getPrice() * line.getQuantity();
         }
         return result;
     }
