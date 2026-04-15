@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class InvoiceLineDto {
     private ProductDto product;
     private int quantity;
-    private double total;
+    private Double total;
 }
 
 
