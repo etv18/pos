@@ -8,7 +8,11 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(
+        componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        uses = InvoiceLineMapper.class
+)
 public interface InvoiceMapper {
     @Mapping(target = "total", source = ".", qualifiedByName = "calculateInvoiceTotal")
     InvoiceDto toDto(Invoice invoice);
