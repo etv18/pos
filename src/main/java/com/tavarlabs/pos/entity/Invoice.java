@@ -19,14 +19,11 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String code;
 
     @Column(nullable = false)
     private String clientName;
-
-    @Column(nullable = false)
-    private double total;
 
     /*
     * Bidirectional OneToMany relationship
@@ -35,7 +32,7 @@ public class Invoice {
     * The owning side is InvoiceLine.invoice, which contains the foreign key.
     * "mappedBy" must match the field name in InvoiceLine class.
     * */
-    @OneToMany(mappedBy = "invoice")
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
     private List<InvoiceLine> lines;
 
     @Column(nullable = false)
