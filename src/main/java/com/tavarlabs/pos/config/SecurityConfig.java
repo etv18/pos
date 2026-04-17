@@ -1,5 +1,6 @@
-package com.tavarlabs.pos.security;
+package com.tavarlabs.pos.config;
 
+import com.tavarlabs.pos.security.AuthEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
