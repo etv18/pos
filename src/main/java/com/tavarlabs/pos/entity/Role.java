@@ -1,5 +1,6 @@
 package com.tavarlabs.pos.entity;
 
+import com.tavarlabs.pos.enums.RoleName;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,8 +18,9 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(unique = true, nullable = false)
-    private String name;
+    private RoleName name;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
