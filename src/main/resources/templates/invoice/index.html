@@ -1,10 +1,40 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" data-bs-theme="dark">
 <head th:replace="~{fragments/components :: head}"></head>
 <body>
-<h1>Hello, world!</h1>
 <div th:replace="~{fragments/components :: headerNavBar}"></div>
 
+<div class="container">
+    <div class="d-flex gap-1 mt-2" id="getProductsTab">
+        <div>
+            <input type="text" class="form-control" id="txtProductCode" placeholder="# 0000">
+        </div>
+        <button type="button" class="btn btn-outline-success" id="btnSearchProduct">
+            <span class="fw-bold">Q</span>
+        </button>
+        <button type="button" class="btn btn-secondary" id="btnCreateInvoice">
+            <span class="fw-bold">Create Invoice</span>
+        </button>
+    </div>
+    <div class="table-responsive overflow-y-auto border rounded-2 mt-2" style="max-height: 600px;">
+        <table class="table" id="tblInvoiceLines">
+        <thead>
+            <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Name</th>
+                <th scope="col">Unit Price</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    </div>
+</div>
+
+<script type="module" th:src="@{/js/utils/common.js}"></script>
+<script type="module" th:src="@{/js/invoice/script.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>
