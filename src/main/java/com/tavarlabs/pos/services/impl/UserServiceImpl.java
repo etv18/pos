@@ -3,6 +3,7 @@ package com.tavarlabs.pos.services.impl;
 import com.tavarlabs.pos.dtos.user.UserRequestDto;
 import com.tavarlabs.pos.entity.Role;
 import com.tavarlabs.pos.entity.User;
+import com.tavarlabs.pos.mappers.UserMapper;
 import com.tavarlabs.pos.repositories.UserRepository;
 import com.tavarlabs.pos.services.RoleService;
 import com.tavarlabs.pos.services.UserService;
@@ -27,10 +28,15 @@ public class UserServiceImpl implements UserService {
                 .fullName(userDto.getFullName())
                 .username(userDto.getUsername())
                 .password(passwordEncoder.encode(userDto.getPassword()))
-                .isActive(true)
+                .isActive(false)
                 .roles(roles)
                 .build();
 
         return userRepository.save(user);
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAllWithRoles();
     }
 }
