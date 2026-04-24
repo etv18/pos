@@ -8,10 +8,9 @@ import com.tavarlabs.pos.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -27,5 +26,14 @@ public class UserController {
         User user = userService.createUser(userRequestDto);
         UserResponseDto dto = userMapper.toResponseDto(user);
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserResponseDto>> getAllUsers(){
+        List<UserResponseDto> users = userService.getAllUsers().stream()
+                .map(user -> {
+                    return userMapper.toResponseDto(user);
+                }).toList();
+        return ResponseEntity.ok(users);
     }
 }
