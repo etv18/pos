@@ -32,6 +32,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public UserDetails authenticate(String username, String password) {
+        //This manager handle the authentication to default provider
+        //for creating this token, TODO: look deeper information about it
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)
         );
