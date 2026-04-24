@@ -16,5 +16,6 @@ import java.util.List;
 public class UserResponseDto {
     private String fullName;
     private String username;
+    private boolean isActive;
     private List<String> roles;
 }
