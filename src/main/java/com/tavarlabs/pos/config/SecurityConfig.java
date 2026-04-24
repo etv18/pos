@@ -39,18 +39,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepo){
-        PosUserDetailsService posUserDetailsService = new PosUserDetailsService(userRepo);
-        String username = "admin";
-        userRepo.findByUsername(username).orElseGet(() -> {
-            User user = User.builder()
-                    .fullName("User Admin")
-                    .username("admin")
-                    .password(passwordEncoder().encode("admin"))
-                    .roles(List.of())
-                    .build();
-            return userRepo.save(user);
-        });
-        return posUserDetailsService;
+        return new PosUserDetailsService(userRepo);
     }
 
     @Bean
