@@ -20,7 +20,7 @@ public class Role {
 
     @Enumerated(EnumType.STRING)
     @Column(unique = true, nullable = false)
-    private RoleName name;
+    private RoleName roleName;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
