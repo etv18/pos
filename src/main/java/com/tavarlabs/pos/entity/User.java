@@ -27,6 +27,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private Boolean isActive;
+
     @ManyToMany
             @JoinTable(
                     name = "user_role",
