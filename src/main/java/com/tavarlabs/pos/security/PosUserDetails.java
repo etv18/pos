@@ -17,6 +17,7 @@ public class PosUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        //TODO: Map roles to granted authorities
         return List.of();
     }
 
@@ -47,7 +48,7 @@ public class PosUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.getIsActive();
     }
 
     public Long getId(){
