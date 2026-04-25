@@ -7,10 +7,10 @@ import com.tavarlabs.pos.repositories.RoleRepository;
 import com.tavarlabs.pos.services.RoleService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.action.internal.EntityActionVetoException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +20,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<Role> mapRoles(List<String> rolesStr) {
+        if(rolesStr.isEmpty()) throw new IllegalArgumentException("User must have at least one role.");
         return rolesStr.stream()
                 .map(str -> {
                     return roleMapper.toRoleNameEnum(str);
@@ -32,6 +33,6 @@ public class RoleServiceImpl implements RoleService {
                                     )
                             );
                 })
-                .toList();
+                .collect(Collectors.toList());
     }
 }
