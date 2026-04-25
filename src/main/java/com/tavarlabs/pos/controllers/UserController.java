@@ -1,13 +1,14 @@
 package com.tavarlabs.pos.controllers;
 
-import com.tavarlabs.pos.dtos.user.UserRequestDto;
+import com.tavarlabs.pos.dtos.user.CreateUserRequestDto;
+import com.tavarlabs.pos.dtos.user.UpdateUserRequestDto;
 import com.tavarlabs.pos.dtos.user.UserResponseDto;
 import com.tavarlabs.pos.entity.User;
 import com.tavarlabs.pos.mappers.UserMapper;
 import com.tavarlabs.pos.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,9 +22,9 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponseDto> createUser(
-            @RequestBody UserRequestDto userRequestDto
+          @Valid @RequestBody CreateUserRequestDto createUserRequestDto
     ){
-        User user = userService.createUser(userRequestDto);
+        User user = userService.createUser(createUserRequestDto);
         UserResponseDto dto = userMapper.toResponseDto(user);
         return ResponseEntity.ok(dto);
     }
@@ -36,4 +37,14 @@ public class UserController {
                 }).toList();
         return ResponseEntity.ok(users);
     }
+
+    @PutMapping
+    public ResponseEntity<UserResponseDto> updateUser(
+            @Valid @RequestBody UpdateUserRequestDto updateUserRequestDto
+    ) {
+        User user = userService.updateUser(updateUserRequestDto);
+        UserResponseDto dto = userMapper.toResponseDto(user);
+        return ResponseEntity.ok(dto);
+    }
+
 }
