@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Builder
 @AllArgsConstructor
@@ -32,5 +33,21 @@ public class Role {
     protected void onCreate(){
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Role role = (Role) o;
+        return Objects.equals(id, role.id) && roleName == role.roleName && Objects.equals(createdAt, role.createdAt) && Objects.equals(updatedAt, role.updatedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, roleName, createdAt, updatedAt);
+    }
+
+    public boolean shareRoleNames(RoleName externalRoleName){
+        return externalRoleName.name().equals(this.roleName.name());
     }
 }
