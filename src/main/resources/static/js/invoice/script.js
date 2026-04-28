@@ -17,7 +17,7 @@ async function getProductByCode(txtInput) {
     const data = await response.json();
 
     if(!response.ok) {
-        console.error(data);
+        alert(data.message);
         throw new Error("Sth went wrong: " + data);
     }
 
