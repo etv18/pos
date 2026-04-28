@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,6 +51,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getASingleUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User with username [ " + username + " ] was not found"
+                ));
+        return user;
+    }
+
+    @Transactional
+    @Override
     public User updateUser(UpdateUserRequestDto userDto) {
         String oldUsername = userDto.getOldUsername();
         String newUsername = userDto.getUsername();
@@ -82,6 +93,15 @@ public class UserServiceImpl implements UserService {
         }
 
         return userRepository.save(savedUser);
+    }
+
+    @Override
+    public void deleteUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User with username [ " + username + " ] was not found"
+                ));
+        userRepository.delete(user);
     }
 
     private boolean isUsernameBeingUsed(String username) throws IllegalArgumentException{
