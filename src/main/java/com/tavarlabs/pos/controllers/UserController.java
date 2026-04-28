@@ -38,6 +38,13 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping(path = "/{username}")
+    public ResponseEntity<UserResponseDto> getASingleUser(@PathVariable String username) {
+        User user = userService.getASingleUser(username);
+        UserResponseDto dto = userMapper.toResponseDto(user);
+        return ResponseEntity.ok(dto);
+    }
+
     @PutMapping
     public ResponseEntity<UserResponseDto> updateUser(
             @Valid @RequestBody UpdateUserRequestDto updateUserRequestDto
@@ -45,6 +52,12 @@ public class UserController {
         User user = userService.updateUser(updateUserRequestDto);
         UserResponseDto dto = userMapper.toResponseDto(user);
         return ResponseEntity.ok(dto);
+    }
+
+    @DeleteMapping(path = "/{username}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String username) {
+        userService.deleteUser(username);
+        return ResponseEntity.noContent().build();
     }
 
 }
