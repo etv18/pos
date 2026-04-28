@@ -3,14 +3,12 @@ package com.tavarlabs.pos.dtos.user;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -31,6 +29,5 @@ public class UpdateUserRequestDto {
     @Size(min = 1, message = "You must assign at least one role to a user")
     private List<String> roles;
 
-
-    private boolean isActive;
+    private boolean active;
 }
