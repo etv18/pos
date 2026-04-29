@@ -8,11 +8,16 @@ import com.tavarlabs.pos.security.PosUserDetailsService;
 import com.tavarlabs.pos.services.AuthenticationService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Duration;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,19 +28,40 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<?> login(
+            @RequestBody LoginRequest loginRequest,
+            HttpServletResponse response
+    ){
         UserDetails userDetails = authenticationService.authenticate(
                 loginRequest.getUsername(),
                 loginRequest.getPassword()
         );
 
-        String token = authenticationService.generateToken(userDetails);
+        String jwt = authenticationService.generateToken(userDetails);
 
-        AuthResponse authResponse = AuthResponse.builder()
-                .token(token)
-                .expiresIn(86400)
+//        AuthResponse authResponse = AuthResponse.builder()
+//                .token(token)
+//                .expiresIn(86400)
+//                .build();
+
+        /*
+        * I set up this way to send jwt due to I'm using a rest architecture in the backend,
+        * and I'm using thymeleaf for the views it's easier to set up the jwt in Http Only Cookie
+        * so that way the browser stores it and send automatically to the backend in every request.
+        *
+        * This way I'm able to use thymeleaf and take advantages of its functionalities with no
+        * headaches about manually using js to send the token.
+         * */
+        ResponseCookie cookie = ResponseCookie.from("token", jwt)
+                .httpOnly(true)
+                .path("/")
+                .sameSite("Lax") // This means: send the cookie in normal navigation, like 'clicks' on links, etc...
+                .maxAge(Duration.ofDays(1))
                 .build();
-        return ResponseEntity.ok(authResponse);
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.ok("Login Successfully");
     }
 
     @GetMapping("/test")
