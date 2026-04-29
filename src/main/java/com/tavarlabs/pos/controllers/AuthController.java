@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
+import java.util.ArrayList;
 
 @RequiredArgsConstructor
 @RestController
@@ -38,11 +39,13 @@ public class AuthController {
         );
 
         String jwt = authenticationService.generateToken(userDetails);
+        String url = authenticationService.getUrlBasedOnRole(new ArrayList<>(userDetails.getAuthorities()));
 
-//        AuthResponse authResponse = AuthResponse.builder()
-//                .token(token)
-//                .expiresIn(86400)
-//                .build();
+        AuthResponse authResponse = AuthResponse.builder()
+                .token(jwt)
+                .expiresIn(86400)
+                .url(url)
+                .build();
 
         /*
         * I set up this way to send jwt due to I'm using a rest architecture in the backend,
@@ -61,7 +64,7 @@ public class AuthController {
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        return ResponseEntity.ok("Login Successfully");
+        return ResponseEntity.ok(authResponse);
     }
 
     @GetMapping("/test")
