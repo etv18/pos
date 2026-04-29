@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -34,10 +35,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public UserDetails authenticate(String username, String password) {
         //This manager handle the authentication to default provider
         //for creating this token, TODO: look deeper information about it
-        authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)
         );
-        return userDetailsService.loadUserByUsername(username);
+        return (UserDetails) authentication.getPrincipal();
     }
 
     @Override
