@@ -3,6 +3,7 @@ package com.tavarlabs.pos.security;
 import com.tavarlabs.pos.services.AuthenticationService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -52,9 +53,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String extractToken(HttpServletRequest request){
+        //Get the token from the header first
         String bearerToken = request.getHeader("Authorization");
         if(bearerToken != null && bearerToken.startsWith(BEARER_))
             return bearerToken.substring(BEARER_.length());
+
+        //If the code block above didnt find it try the cookies
+        if(request.getCookies() != null)
+            for(Cookie cookie : request.getCookies()) {
+                if("token".equals(cookie.getName())) return cookie.getValue();
+            }
         return null;
     }
 }
