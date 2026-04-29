@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
                 .body(
                         Map.of(
                                 "error", "invalid credentials",
-                                "message", "Username or password is incorrect"
+                                "message", ex.getMessage()
                         )
                 );
     }
