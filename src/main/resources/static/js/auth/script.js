@@ -20,7 +20,10 @@ async function logIn(username, password){
 
     if(!res.ok){
         alert(data.message);
+        return;
     }
+
+    window.location.href = data.url;
 }
 
 btnSignIn.addEventListener("click", async e => {
