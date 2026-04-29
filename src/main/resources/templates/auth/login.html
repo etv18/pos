@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" data-bs-theme="dark">
+<head th:replace="~{fragments/components :: head}"></head>
+<body class="d-flex align-items-center justify-content-center vh-100">
+
+<div class="container" style="max-width: 400px;">
+    <div class="d-flex justify-content-center">
+        <h2 class="fw-bold">Login</h2>
+    </div>
+    <form id="loginForm">
+        <!-- Email input -->
+        <div class="mb-4">
+            <input type="text" class="form-control" id="txtUsername"/>
+            <label class="form-label">Username</label>
+        </div>
+
+        <!-- Password input -->
+        <div class="mb-4">
+            <input type="password" class="form-control" id="txtPassword"/>
+            <label class="form-label">Password</label>
+        </div>
+
+        <!-- Submit button -->
+        <button type="button" class="btn btn-primary w-100" id="btnSignIn">Sign In</button>
+    </form>
+</div>
+
+<script type="module" th:src="@{/js/auth/script.js}"></script>
+
+</body>
+</html>
