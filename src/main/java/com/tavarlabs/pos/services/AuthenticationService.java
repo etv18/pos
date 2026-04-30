@@ -1,5 +1,6 @@
 package com.tavarlabs.pos.services;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,4 +11,5 @@ public interface AuthenticationService {
     String generateToken(UserDetails userDetails);
     UserDetails validateToken(String token);
     String getUrlBasedOnRole(List<GrantedAuthority> roles);
+    void logoutUser(HttpServletResponse response);
 }

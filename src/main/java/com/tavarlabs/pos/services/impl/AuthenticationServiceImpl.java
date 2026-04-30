@@ -7,8 +7,11 @@ import io.jsonwebtoken.Jwts;
 import com.tavarlabs.pos.services.AuthenticationService;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -66,6 +69,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public UserDetails validateToken(String token) {
+        /*
+        * TODO: Create a org.springframework.security.core.userdetails.User obj
+        *  instead of loading it from the database AND create a private method to extract the roles.
+        * */
         String username = extractUserName(token);
         return userDetailsService.loadUserByUsername(username);
     }
@@ -88,6 +95,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BadCredentialsException("User roles are not valid...");
         }
 
+    }
+
+    @Override
+    public void logoutUser(HttpServletResponse response) {
+        /*
+        * This way I delete the cookie which has the jwt which the browser has stored,
+        * so it wouldn't be sent by him automatically anymore in every request as I
+        * set it up in the login method at AuthController class.
+        * */
+        ResponseCookie cookie = ResponseCookie.from("token", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     private Key getSigningKey(){
