@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -65,6 +66,14 @@ public class AuthController {
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         return ResponseEntity.ok(authResponse);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<?> logOut(HttpServletResponse response){
+        authenticationService.logoutUser(response);
+        return ResponseEntity.ok(
+                Map.of("url", "/auth/login")
+        );
     }
 
     @GetMapping("/test")
