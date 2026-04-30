@@ -15,7 +15,7 @@ public class UserViewController {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    @GetMapping("/create")
+    @GetMapping("/index")
     public String createView(Model model){
         model.addAttribute("tabTitle", "User");
         model.addAttribute(
