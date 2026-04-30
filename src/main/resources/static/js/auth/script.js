@@ -2,7 +2,7 @@ const btnSignIn = document.getElementById("btnSignIn");
 const loginForm = document.getElementById("loginForm");
 const txtUsername = document.getElementById("txtUsername");
 const txtPassword = document.getElementById("txtPassword");
-const loginEndpoint = "http://localhost:8080/api/v1/auth/login";
+const loginEndpoint = "/api/v1/auth/login";
 
 async function logIn(username, password){
     const res = await fetch(loginEndpoint, {
