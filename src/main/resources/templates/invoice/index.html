@@ -2,7 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en" data-bs-theme="dark">
 <head th:replace="~{fragments/components :: head}"></head>
 <body>
+
 <div th:replace="~{fragments/components :: headerNavBar}"></div>
+
+<div class="d-flex justify-content-end mt-2 mx-2">
+    <p class="fs-4 fw-bold">
+        <i class="bi bi-person-square"></i>
+        <span th:text="${username}"></span>
+    </p>
+</div>
 
 <div class="container">
     <div class="d-flex gap-1 mt-2" id="getProductsTab">
