@@ -1,5 +1,7 @@
 package com.tavarlabs.pos.controllers;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class InvoiceViewController {
 
     @GetMapping("/create")
-    public String createView(Model model){
+    public String createView(Model model, Authentication authentication){
+        String username = ((UserDetails) authentication.getPrincipal()).getUsername();
+        model.addAttribute("username", username.toUpperCase());
         model.addAttribute("tabTitle", "Invoice");
         return "invoice/index";
     }
