@@ -1,4 +1,7 @@
-<div xmlns:th="http://www.thymeleaf.org">
+<div
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
 
     <head th:fragment="head">
         <meta charset="utf-8">
@@ -19,18 +22,18 @@
                     <li class="nav-item">
                         <a class="nav-link active" th:href="@{/invoice/create}">Invoices</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                         <a class="nav-link active" th:href="@{/user/index}">Users</a>
                     </li>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown" sec:authorize="hasAnyRole('ADMIN', 'STAFF')">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Dropdown
+                            Stats
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            <li><a class="dropdown-item" href="#">Sales</a></li>
+                            <li><a class="dropdown-item" href="#">Purchases</a></li>
+                            <!-- <li><hr class="dropdown-divider"></li> -->
+                            <li><a class="dropdown-item" th:href="@{/stock/products}">Stock</a></li>
                         </ul>
                     </li>
                 </ul>
