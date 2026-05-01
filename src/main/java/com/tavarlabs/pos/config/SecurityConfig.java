@@ -75,7 +75,7 @@ public class SecurityConfig {
                         .requestMatchers("/js/**", "/css/**").permitAll() //This allows to server static files
                         .requestMatchers(HttpMethod.GET, "/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/test").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/user/**").hasAnyRole("STAFF", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
