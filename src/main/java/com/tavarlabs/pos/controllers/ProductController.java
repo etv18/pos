@@ -26,12 +26,11 @@ public class ProductController {
         return ResponseEntity.ok(productDto);
     }
 
-    @PutMapping(path = "/{code}")
+    @PutMapping
     public ResponseEntity<ProductDto> updateProduct(
-            @PathVariable String code,
             @Valid @RequestBody UpdateProductRequest updateProductRequest
     ) {
-        ProductDto productDto = productMapper.toDto(productService.updateProduct(code, updateProductRequest));
+        ProductDto productDto = productMapper.toDto(productService.updateProduct(updateProductRequest));
         return ResponseEntity.ok(productDto);
     }
 
