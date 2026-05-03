@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UpdateProductRequest {
+    @NotNull(message = "Code is required")
+    private Long code;
 
     @NotBlank(message = "Product name is required") // Annotations just for integers
     @NotNull(message = "Name is required")
