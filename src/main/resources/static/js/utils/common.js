@@ -10,19 +10,12 @@ export async function makeRequestToBackend(url, payload, method) {
             body: JSON.stringify(payload)
         });
 
+        data = await response.json();
+
         if (!response.ok) {
-            const errorData = await response.json();
-            // Swal.fire({
-            //     icon: 'error',
-            //     title: 'Error',
-            //     text: errorData.error || 'Something went wrong.'
-            // });
-            console.error(errorData);
             return;
         }
 
-        data = await response.json();
-        console.log(data);
         return data;
 
     } catch (error) {
