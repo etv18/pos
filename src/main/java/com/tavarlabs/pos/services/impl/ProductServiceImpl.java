@@ -36,7 +36,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProduct(String code, UpdateProductRequest updateProductRequest) {
+    public Product updateProduct(UpdateProductRequest updateProductRequest) {
+        String code = updateProductRequest.getCode().toString();
         Product savedProduct = productRepository.findByCode(code)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found. code = " + code));
 
