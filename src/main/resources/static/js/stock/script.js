@@ -55,6 +55,21 @@ function showEditModal(event){
     modal.show();
 }
 
+async function deleteProduct(event){
+    const target = event.target.closest(".delete-product");
+    if(!target) return;
+    const code = target.getAttribute("data-product-code");
+    const fullUrl = productsUrl + "/" + code;
+    const response = await fetch(fullUrl, {method: "DELETE"});
+    const data = response.json();
+
+    if(!response.ok) {
+        alert("Something went wrong: " + data.message);
+        return;
+    }
+    window.location.reload();
+}
+
 btnSaveNewProduct.addEventListener("click", async e => {
     const productResponse = await createProduct();
     if(productResponse) window.location.reload();
@@ -65,11 +80,9 @@ btnSaveExistingProduct.addEventListener("click", async e => {
     if(productResponse) window.location.reload();
 });
 
-tblProducts.addEventListener("click", e => {
+tblProducts.addEventListener("click", async e => {
     showEditModal(e);
+    await deleteProduct(e);
 });
 
-createProductModalElem.addEventListener("hidden.bs.modal", () => {
-
-});
 

@@ -132,7 +132,12 @@
             >
               <i class="bi bi-pen"></i>
             </button>
-            <a href="#" class="delete-product btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+            <a href="#"
+               class="delete-product btn btn-outline-danger"
+               th:data-product-code="${p.code}"
+            >
+              <i class="bi bi-trash"></i>
+            </a>
           </div>
         </td>
       </tr>
