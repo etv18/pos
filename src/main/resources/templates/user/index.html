@@ -12,9 +12,60 @@
     </p>
 </div>
 
+<div class="modal fade" tabindex="-1" id="createProductModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Create User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-floating mt-2">
+                    <input type="text" id="txtFullName" class="form-control"
+                           placeholder="Full name" required>
+                    <label for="txtFullName">Full name</label>
+                </div>
+
+                <div class="form-floating mt-2">
+                    <input type="text" id="txtUsername" class="form-control"
+                           placeholder="0" required>
+                    <label for="txtUsername" >Stock</label>
+                </div>
+
+                <div class="form-floating mt-2">
+                    <input type="text" id="txtPassword" class="form-control"
+                           placeholder="0" required>
+                    <label for="txtPassword">Password</label>
+                </div>
+
+                <div class="roles-group mt-2 d-flex gap-2">
+                    <div th:each="role : ${roles}">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" th:value="${role}" th:id="${role}">
+                            <label th:text="${role}" class="form-check-label"
+                                   th:for="${role}"
+                            >
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btnSaveNewProduct">Create Product</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container mt-2">
     <div class="control-panel">
-        <button type="button" id="btnCreateUser" class="btn btn-outline-light">
+        <button type="button"
+                id="btnCreateUser"
+                class="btn btn-outline-light"
+                data-bs-toggle="modal"
+                data-bs-target="#createProductModal"
+        >
             New User <span><i class="bi bi-person-add"></i></span>
         </button>
     </div>
@@ -53,7 +104,15 @@
                     </td>
                     <td>
                         <div class="d-flex gap-2">
-                            <a href="#" class="edit-user btn btn-outline-success"><i class="bi bi-pen"></i></a>
+                            <button type="button"
+                                    class="edit-user btn btn-outline-success"
+                                    th:data-user-username="${user.username}"
+                                    th:data-user-fullname="${user.fullName}"
+                                    th:data-user-roles="${user.roles}"
+                                    th:data-user-active="${user.isActive}"
+                            >
+                                <i class="bi bi-pen"></i>
+                            </button>
                             <a href="#" class="edit-user btn btn-outline-danger"><i class="bi bi-trash"></i></a>
                         </div>
                     </td>
