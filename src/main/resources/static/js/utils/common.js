@@ -13,6 +13,7 @@ export async function makeRequestToBackend(url, payload, method) {
         data = await response.json();
 
         if (!response.ok) {
+            alert("ERROR: " + data.message);
             return;
         }
 
