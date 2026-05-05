@@ -79,7 +79,8 @@ public class UserServiceImpl implements UserService {
             savedUser.setFullName(userDto.getFullName());
         }
 
-        if(!passwordEncoder.matches(userDto.getPassword(), savedUser.getPassword())) {
+        //TODO: Enforce a password policy
+        if(userDto.getPassword().length() > 3) {
             savedUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
 
