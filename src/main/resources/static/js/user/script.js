@@ -49,6 +49,19 @@ async function updateUser() {
     return await makeRequestToBackend(usersUrl, updateUserRequest, "PUT");
 }
 
+async function deleteUser(event){
+    const target = event.target.closest(".delete-user");
+    if(!target) return;
+    const username = target.getAttribute("data-user-username");
+    const fullUrl = usersUrl + "/" + username;
+    const response = await fetch(fullUrl, {method: "DELETE"});
+    if(!response.ok) {
+        alert("Something went wrong: " + data.message);
+        return;
+    }
+    window.location.reload();
+}
+
 function modifyUserRoles(event, roleList){
     const target = event.target.closest(".form-check");
     if(!target) return;
@@ -150,8 +163,9 @@ btnSaveChangesUser.addEventListener("click", async e => {
     if(userResponse) window.location.reload();
 });
 
-tblUsers.addEventListener("click", e => {
+tblUsers.addEventListener("click", async e => {
    showUpdateUserModal(e);
+   await deleteUser(e);
 });
 
 document.addEventListener("DOMContentLoaded", e => {

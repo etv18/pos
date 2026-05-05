@@ -20,7 +20,7 @@ export async function makeRequestToBackend(url, payload, method) {
         return data;
 
     } catch (error) {
-        console.error(error.message);
+        console.error(error);
     }
 
 }
