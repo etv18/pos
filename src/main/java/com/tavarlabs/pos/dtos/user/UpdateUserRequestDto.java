@@ -22,7 +22,6 @@ public class UpdateUserRequestDto {
     @NotBlank(message = "Old user's username must be field")
     private String oldUsername;
 
-    @NotBlank(message = "You must type a password")
     private String password;
 
     @NotNull(message = "You must assign at least one role to a user")
