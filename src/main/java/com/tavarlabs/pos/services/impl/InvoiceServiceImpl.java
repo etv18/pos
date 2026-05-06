@@ -54,6 +54,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceRepository.save(newInvoice);
     }
 
+    @Override
+    public Invoice findInvoiceByCode(String code) {
+        return invoiceRepository.findByCode(code).orElseThrow(
+                () -> new EntityNotFoundException("Invoice with code " + code + "was not found")
+        );
+    }
+
     private List<InvoiceLine> generateInvoiceLines(List<CreateInvoiceLineRequest> requestedLines, Invoice invoice){
         List<InvoiceLine> lines = new ArrayList<>();
         Product product = null;
