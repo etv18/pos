@@ -1,6 +1,7 @@
 package com.tavarlabs.pos.mappers;
 
 import com.tavarlabs.pos.dtos.invoice.InvoiceDto;
+import com.tavarlabs.pos.dtos.invoice.InvoiceWithoutLinesDto;
 import com.tavarlabs.pos.entity.Invoice;
 import com.tavarlabs.pos.entity.InvoiceLine;
 import org.mapstruct.Mapper;
@@ -16,6 +17,9 @@ import org.mapstruct.ReportingPolicy;
 public interface InvoiceMapper {
     @Mapping(target = "total", source = ".", qualifiedByName = "calculateInvoiceTotal")
     InvoiceDto toDto(Invoice invoice);
+
+    @Mapping(target = "total", source = ".", qualifiedByName = "calculateInvoiceTotal")
+    InvoiceWithoutLinesDto toInvoiceWithoutLinesDto(Invoice invoice);
 
     @Named("calculateInvoiceTotal")
     default double calculateInvoiceTotal(Invoice invoice){
