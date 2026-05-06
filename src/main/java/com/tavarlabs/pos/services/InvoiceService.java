@@ -8,4 +8,5 @@ import java.util.List;
 public interface InvoiceService {
     List<Invoice> getAllInvoices();
     Invoice createInvoice(CreateInvoiceRequest invoiceRequest);
+    Invoice findInvoiceByCode(String code);
 }
