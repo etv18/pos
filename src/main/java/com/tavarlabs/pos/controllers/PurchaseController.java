@@ -8,6 +8,7 @@ import com.tavarlabs.pos.services.PurchaseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class PurchaseController {
     private final PurchaseService purchaseService;
     private final PurchaseMapper purchaseMapper;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping
     public ResponseEntity<List<PurchaseDto>> getAllPurchases(){
         List<Purchase> purchases = purchaseService.getAllPurchases();
@@ -29,6 +31,7 @@ public class PurchaseController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<PurchaseDto> createPurchase(
             @Valid @RequestBody CreatePurchaseRequest createPurchaseRequest
     ){

@@ -9,6 +9,7 @@ import com.tavarlabs.pos.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,12 +22,14 @@ public class ProductController {
     private final ProductMapper productMapper;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody CreateProductRequest request){
         ProductDto productDto = productMapper.toDto(productService.createProduct(request));
         return ResponseEntity.ok(productDto);
     }
 
     @PutMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<ProductDto> updateProduct(
             @Valid @RequestBody UpdateProductRequest updateProductRequest
     ) {
@@ -35,6 +38,7 @@ public class ProductController {
     }
 
     @DeleteMapping(path = "/{code}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<Void> deleteProduct(@PathVariable String code) {
         productService.deleteProduct(code);
         return ResponseEntity.noContent().build();
