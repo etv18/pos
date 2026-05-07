@@ -13,7 +13,7 @@
 
     <nav th:fragment="headerNavBar" class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="#">Dashboard</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -22,19 +22,22 @@
                     <li class="nav-item">
                         <a class="nav-link active" th:href="@{/invoice/create}">Invoices</a>
                     </li>
-                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                        <a class="nav-link active" th:href="@{/user/index}">Users</a>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/purchase/create}">Purchases</a>
                     </li>
                     <li class="nav-item dropdown" sec:authorize="hasAnyRole('ADMIN', 'STAFF')">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Stats
+                            History
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" th:href="@{/sales/invoices}">Sales</a></li>
-                            <li><a class="dropdown-item" href="#">Purchases</a></li>
+                            <li><a class="dropdown-item" th:href="@{/history/invoices}">Sales</a></li>
+                            <li><a class="dropdown-item" th:href="@{/history/purchases}">Purchases</a></li>
                             <!-- <li><hr class="dropdown-divider"></li> -->
                             <li><a class="dropdown-item" th:href="@{/stock/products}">Stock</a></li>
                         </ul>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link active" th:href="@{/user/index}">Users</a>
                     </li>
                 </ul>
                 <!--
