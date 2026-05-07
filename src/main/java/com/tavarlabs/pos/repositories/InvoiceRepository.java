@@ -18,5 +18,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
     @Query("SELECT inv FROM Invoice inv JOIN FETCH inv.lines WHERE inv.code = :code")
     Optional<Invoice> findByCode(@Param("code") String code);
+
     boolean existsByCode(String code);
 }
