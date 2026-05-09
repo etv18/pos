@@ -1,0 +1,61 @@
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 540px;
+}
+
+.service-card {
+    transition: all 0.25s ease;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #293234;
+    /*box-shadow: 0 4px 12px rgba(0,0,0,0.25);*/
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.15);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.35);
+}
+
+.icon-wrapper {
+    width: 65px;
+    height: 65px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    /*background: linear-gradient(135deg, #21b729, #3b82f6);*/
+    /*box-shadow: 0 4px 10px rgba(13,110,253,0.25);*/
+}
+
+.custom-badge {
+    background: rgba(13,110,253,0.15);
+    color: #6ea8fe;
+    border: 1px solid rgba(13,110,253,0.25);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.service-title {
+    color: #f8f9fa;
+    font-weight: 600;
+}
+
+.service-text {
+    color: #adb5bd;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.section-title {
+    color: #f8f9fa;
+}
+
+.section-subtitle {
+    color: #9ca3af;
+}
