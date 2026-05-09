@@ -1,5 +1,6 @@
 package com.tavarlabs.pos.repositories;
 
+import com.tavarlabs.pos.dtos.stats.MonthlySum;
 import com.tavarlabs.pos.entity.Invoice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +19,15 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
     @Query("SELECT inv FROM Invoice inv JOIN FETCH inv.lines WHERE inv.code = :code")
     Optional<Invoice> findByCode(@Param("code") String code);
+
+    @Query(
+            "SELECT new com.tavarlabs.pos.dtos.stats.MonthlySum(MONTH(i.createdAt), SUM(i.total)) " +
+                    "FROM Invoice i " +
+                    "WHERE YEAR(i.createdAt) = :year " +
+                    "GROUP BY MONTH(i.createdAt) " +
+                    "ORDER BY MONTH(i.createdAt) ASC"
+    )
+    List<MonthlySum> getMonthlySalesTotals(@Param("year") int year);
 
     boolean existsByCode(String code);
 }
