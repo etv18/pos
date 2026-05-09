@@ -90,7 +90,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         else if (
                 rolesStr.contains(RoleName.ROLE_ADMIN.name()) || rolesStr.contains(RoleName.ROLE_STAFF.name())
         ){
-            return "/dashboard/index";
+            return "/dashboard";
         } else {
             throw new BadCredentialsException("User roles are not valid...");
         }
