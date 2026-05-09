@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" data-bs-theme="dark">
+<head th:replace="~{fragments/components :: head}"></head>
+
+<link rel="stylesheet" th:href="@{/css/styles.css}">
+
+<body>
+<div th:replace="~{fragments/components :: headerNavBar}"></div>
+
+<div class="container">
+<!--    -->
+<!--    <div class="row justify-content-center">-->
+<!--        <div class="col-12 text-center mb-5">-->
+<!--            <span class="custom-badge text-white mb-3 d-inline-block">Our Services</span>-->
+<!--            <h2 class="display-5 fw-bold mb-3">What We Offer</h2>-->
+<!--            <p class="text-muted">Discover our range of professional services tailored to your needs</p>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    -->
+    <div class="row g-4 mt-2 p-3">
+        <div class="col-md-4">
+            <div class="service-card h-100 p-4">
+                <div class="icon-wrapper mb-4 bg-primary">
+                    <div class="fs-2">
+                        <i class="bi bi-box-seam-fill"></i>
+                    </div>
+                </div>
+                <h4 class="service-title text-center mb-3">Available</h4>
+                <div class="d-flex justify-content-center">
+                    <p class="fs-3 fw-bold">958</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="service-card h-100 p-4">
+                <div class="icon-wrapper mb-4 bg-warning">
+                    <div class="fs-2">
+                        <i class="bi bi-exclamation-diamond"></i>
+                    </div>
+                </div>
+                <h4 class="service-title text-center mb-3">Running Low</h4>
+                <div class="d-flex justify-content-center">
+                    <p class="fs-3 fw-bold">10</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="service-card h-100 p-4">
+                <div class="icon-wrapper mb-4 bg-danger">
+                    <div class="fs-2">
+                        <i class="bi bi-ban"></i>
+                    </div>
+                </div>
+                <h4 class="service-title text-center mb-3">Out of Stock</h4>
+                <div class="d-flex justify-content-center">
+                    <p class="fs-3 fw-bold">2</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-2 d-flex gap-2">
+        <div >
+            <div class="service-card h-100 p-4">
+                <div class="icon-wrapper mb-4 bg-success">
+                    <div class="fs-2">
+                        <i class="bi bi-currency-dollar"></i>
+                    </div>
+                </div>
+                <h4 class="service-title text-center mb-3 fs-2">Total Sales Today</h4>
+                <div class="d-flex justify-content-center">
+                    <p class="fs-3 fw-bold text-success">$102,927.98</p>
+                </div>
+                <h4 class="service-title text-center mb-3 fs-2">Sold Items</h4>
+                <div class="d-flex justify-content-center">
+                    <p class="fs-3 fw-bold text-primary">272</p>
+                </div>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="monthlySalesTotalCanvas"></canvas>
+        </div>
+    </div>
+
+<script type="module" th:src="@{/js/auth/logOut.js}"></script>
+<script type="module" th:src="@{/js/dashboard/script.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" integrity="sha256-SERKgtTty1vsDxll+qzd4Y2cF9swY9BCq62i9wXJ9Uo=" crossorigin="anonymous"></script>
+</body>
+</html>
