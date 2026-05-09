@@ -1,6 +1,5 @@
 package com.tavarlabs.pos.config;
 
-import com.tavarlabs.pos.entity.User;
 import com.tavarlabs.pos.repositories.UserRepository;
 import com.tavarlabs.pos.security.AuthEntryPoint;
 import com.tavarlabs.pos.security.JwtAuthenticationFilter;
@@ -15,14 +14,11 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -72,9 +68,10 @@ public class SecurityConfig {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests( auth -> auth
-                        .requestMatchers("/js/**", "/css/**").permitAll() //This allows to server static files
+                        .requestMatchers("/js/**", "/static/js/css/**").permitAll() //This allows to server static files
                         .requestMatchers(HttpMethod.GET, "/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/stats/**").permitAll()
                         //.requestMatchers(HttpMethod.POST, "/api/v1/purchases").hasAnyRole("STAFF", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/user/**").hasAnyRole("STAFF", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/history/**").hasAnyRole("STAFF", "ADMIN")
