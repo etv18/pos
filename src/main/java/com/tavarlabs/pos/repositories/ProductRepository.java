@@ -13,8 +13,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findByCode(String code);
 
     @Query("SELECT Count(p) FROM Product p WHERE p.stock < :minimumStock")
-    long countProductsWithLowStock(int minimumStock);
+    Optional<Long> countProductsWithLowStock(int minimumStock);
 
     @Query("SELECT COUNT(p) FROM Product p WHERE p.stock < 1")
-    long countProductsOutOfStock();
+    Optional<Long> countProductsOutOfStock();
+
+    @Query("SELECT SUM(p.stock) FROM Product p WHERE p.stock > 0")
+    Optional<Long> countAvailableStock();
 }
