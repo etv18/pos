@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +30,12 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
                     "ORDER BY MONTH(i.createdAt) ASC"
     )
     List<MonthlySum> getMonthlySalesTotals(@Param("year") int year);
+
+    @Query("SELECT SUM(i.total) FROM Invoice i WHERE i.createdAt BETWEEN :start AND :end")
+    Optional<BigDecimal> totalSalesOfACertainTimeFrame(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
 
     boolean existsByCode(String code);
 }
