@@ -1,6 +1,8 @@
 package com.tavarlabs.pos.services.impl;
 
+import com.tavarlabs.pos.dtos.stats.DashboardData;
 import com.tavarlabs.pos.dtos.stats.MonthlySum;
+import com.tavarlabs.pos.repositories.InvoiceLineRepository;
 import com.tavarlabs.pos.repositories.InvoiceRepository;
 import com.tavarlabs.pos.repositories.ProductRepository;
 import com.tavarlabs.pos.services.StatsService;
@@ -9,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -19,17 +24,30 @@ import java.util.TreeMap;
 public class StatsServiceImpl implements StatsService {
     private final ProductRepository productRepository;
     private final InvoiceRepository invoiceRepository;
+    private final InvoiceLineRepository invoiceLineRepository;
+
+    private final int MINIMUM_STOCK = 5;
 
     @Override
-    public long countProductsWithLowStock(int minimumStock) {
+    public Long countProductsWithLowStock(int minimumStock) {
         if(minimumStock < 1)
             throw new IllegalArgumentException("Minimum stock should be greater than or equals to 1");
-        return productRepository.countProductsWithLowStock(minimumStock);
+        return productRepository.countProductsWithLowStock(minimumStock).orElse(0L);
     }
 
     @Override
-    public long countOutOfStockProducts() {
-        return productRepository.countProductsOutOfStock();
+    public Long countOutOfStockProducts() {
+        return productRepository.countProductsOutOfStock().orElse(0L);
+    }
+
+    @Override
+    public Long countAvailableStock() {
+        return productRepository.countAvailableStock().orElse(0L);
+    }
+
+    @Override
+    public BigDecimal totalSalesOfACertainTimeFrame(LocalDateTime start, LocalDateTime end) {
+        return invoiceRepository.totalSalesOfACertainTimeFrame(start, end).orElse(BigDecimal.ZERO);
     }
 
     @Override
@@ -46,5 +64,22 @@ public class StatsServiceImpl implements StatsService {
         return sortedData.entrySet().stream()
                 .map(sd -> new MonthlySum(sd.getKey(), sd.getValue()))
                 .toList();
+    }
+
+    @Override
+    public DashboardData getDashboardData(LocalDateTime start, LocalDateTime end) {
+        if(start == null || end == null) {
+            LocalDate today = LocalDate.now();
+            start = today.atStartOfDay();
+            end = today.atTime(LocalTime.MAX);
+        }
+        Long soldItems = invoiceLineRepository.countSoldItemsBasedOnTimeFrame(start, end).orElse(0L);
+        return DashboardData.builder()
+                .runningLowItems(countProductsWithLowStock(MINIMUM_STOCK))
+                .outOfStockItems(countOutOfStockProducts())
+                .availableItems(countAvailableStock())
+                .totalTodaySales(totalSalesOfACertainTimeFrame(start, end))
+                .soldItems(soldItems)
+                .build();
     }
 }
