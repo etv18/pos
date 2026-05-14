@@ -68,11 +68,16 @@ public class PurchaseServiceImpl implements PurchaseService {
                     .orElseThrow(() -> new EntityNotFoundException(
                             "Product not found. Product code = "+requestedLine.getProductCode())
                     );
+
+            increaseProductStock(product, requestedLine.getQuantity());
+
             PurchaseLine purchaseLine = new PurchaseLine();
             purchaseLine.setQuantity(requestedLine.getQuantity());
             purchaseLine.setPurchase(purchase);
             purchaseLine.setProduct(product);
             lines.add(purchaseLine);
+
+            productRepository.save(product);
         }
         return lines;
     }
@@ -98,5 +103,10 @@ public class PurchaseServiceImpl implements PurchaseService {
         }
 
         return code;
+    }
+
+    private void increaseProductStock(Product product, int quantity){
+        if(quantity < 0) throw new IllegalArgumentException("Quantity must be greater than 0");
+        product.setStock(product.getStock() + quantity);
     }
 }
