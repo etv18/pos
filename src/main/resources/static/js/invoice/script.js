@@ -180,4 +180,5 @@ btnCreateInvoice.addEventListener('click', async e => {
 
 document.addEventListener('input', e => {
     updateQuantityOnUserInput(e);
+    setInvoiceTotalValue(tblInvoiceLines, 4);
 });

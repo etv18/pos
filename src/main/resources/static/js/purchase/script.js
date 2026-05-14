@@ -180,4 +180,5 @@ btnCreatePurchase.addEventListener('click', async e => {
 
 document.addEventListener('input', e => {
     updateQuantityOnUserInput(e);
+    setPurchaseTotalValue(tblPurchaseLines, 4);
 });
