@@ -17,15 +17,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -69,12 +67,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public UserDetails validateToken(String token) {
-        /*
-        * TODO: Create a org.springframework.security.core.userdetails.User obj
-        *  instead of loading it from the database AND create a private method to extract the roles.
-        * */
         String username = extractUserName(token);
-        return userDetailsService.loadUserByUsername(username);
+        List<SimpleGrantedAuthority> authorities = extractAuthorities(token);
+        return new org.springframework.security.core.userdetails.User(username, "", authorities);
     }
 
     @Override
@@ -125,5 +120,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .parseClaimsJws(token)
                 .getBody();
         return claims.getSubject();
+    }
+
+    private List<SimpleGrantedAuthority> extractAuthorities(String token){
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        List<String> roles = (List<String>) claims.get("roles");
+        return roles.stream()
+                .map(r -> new SimpleGrantedAuthority((String) r))
+                .toList();
     }
 }
