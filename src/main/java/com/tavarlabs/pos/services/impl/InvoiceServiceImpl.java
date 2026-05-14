@@ -69,8 +69,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         for(CreateInvoiceLineRequest requestedLine : requestedLines){
             product = productRepository.findByCode(requestedLine.getProductCode())
                     .orElseThrow(() -> new EntityNotFoundException(
-                            "Product not found. Product code = "+requestedLine.getProductCode())
-                    );
+                            "Product not found. Code = [ "+requestedLine.getProductCode() + " ]"
+                    ));
 
             reduceProductStock(product, requestedLine.getQuantity());
 

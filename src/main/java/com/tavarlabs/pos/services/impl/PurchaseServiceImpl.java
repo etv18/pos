@@ -66,8 +66,8 @@ public class PurchaseServiceImpl implements PurchaseService {
         for(CreatePurchaseLineRequest requestedLine : requestedLines){
             product = productRepository.findByCode(requestedLine.getProductCode())
                     .orElseThrow(() -> new EntityNotFoundException(
-                            "Product not found. Product code = "+requestedLine.getProductCode())
-                    );
+                            "Product not found. Code = [ "+requestedLine.getProductCode() + " ]"
+                    ));
 
             increaseProductStock(product, requestedLine.getQuantity());
 
