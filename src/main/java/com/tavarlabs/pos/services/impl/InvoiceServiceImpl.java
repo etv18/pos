@@ -12,6 +12,7 @@ import com.tavarlabs.pos.services.InvoiceService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -61,6 +62,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         );
     }
 
+    @Transactional
     private List<InvoiceLine> generateInvoiceLines(List<CreateInvoiceLineRequest> requestedLines, Invoice invoice){
         List<InvoiceLine> lines = new ArrayList<>();
         Product product = null;
@@ -69,11 +71,16 @@ public class InvoiceServiceImpl implements InvoiceService {
                     .orElseThrow(() -> new EntityNotFoundException(
                             "Product not found. Product code = "+requestedLine.getProductCode())
                     );
+
+            reduceProductStock(product, requestedLine.getQuantity());
+
             InvoiceLine invoiceLine = new InvoiceLine();
             invoiceLine.setQuantity(requestedLine.getQuantity());
             invoiceLine.setInvoice(invoice);
             invoiceLine.setProduct(product);
             lines.add(invoiceLine);
+
+            productRepository.save(product);
         }
         return lines;
     }
@@ -99,5 +106,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         return code;
+    }
+
+    public void reduceProductStock(Product product, int quantity){
+        if(product.getStock() <= 0) return;
+        int newStock = product.getStock() - quantity;
+        product.setStock(Math.max(newStock, 0)); //Math.max returns the biggest number of two parameters.
     }
 }
