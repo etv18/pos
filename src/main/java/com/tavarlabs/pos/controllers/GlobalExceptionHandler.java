@@ -1,5 +1,7 @@
 package com.tavarlabs.pos.controllers;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,18 @@ public class GlobalExceptionHandler {
                 .body(
                         Map.of(
                                 "error", "invalid credentials",
+                                "message", ex.getMessage()
+                        )
+                );
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<?> handleEntityNotFound(EntityNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        Map.of(
+                                "error", "Entity not found.",
                                 "message", ex.getMessage()
                         )
                 );
