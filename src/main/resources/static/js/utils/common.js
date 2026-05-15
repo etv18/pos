@@ -60,3 +60,20 @@ export function setupCurrencyInput(input) {
         event.target.value = value;
     });
 }
+
+export function validateFields(inputs){
+    let areValid;
+    inputs.forEach(input => {
+        areValid = evaluateInput(input);
+    });
+    return areValid;
+}
+
+export function evaluateInput(input){
+    if(inputIsEmpty(input)){
+        input.classList.add("is-invalid");
+        return false;
+    }
+    input.classList.remove("is-invalid");
+    return true;
+}
