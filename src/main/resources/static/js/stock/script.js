@@ -1,4 +1,4 @@
-import { makeRequestToBackend, inputIsEmpty, setupCurrencyInput } from "../utils/common.js";
+import { makeRequestToBackend, setupCurrencyInput, validateFields } from "../utils/common.js";
 
 const createProductModalElem = document.getElementById("createProductModal");
 const updateProductModalElem = document.getElementById("updateProductModal");
@@ -70,23 +70,6 @@ function showEditModal(event){
     modal.show();
 }
 
-function validateFields(inputs){
-    let areValid;
-    inputs.forEach(input => {
-        areValid = evaluateInput(input);
-    });
-    return areValid;
-}
-
-function evaluateInput(input){
-    if(inputIsEmpty(input)){
-        input.classList.add("is-invalid");
-        return false;
-    }
-    input.classList.remove("is-invalid");
-    return true;
-}
-
 function setUpNumberFormatOnInputs(inputs){
     inputs.forEach(input => setupCurrencyInput(input));
 }
@@ -103,6 +86,8 @@ btnSaveNewProduct.addEventListener("click", async e => {
 });
 
 btnSaveExistingProduct.addEventListener("click", async e => {
+    const inputsForCreating = [txtUpdateName, txtUpdateStock, txtUpdatePrice];
+    if(!validateFields(inputsForCreating)) return;
     const productResponse = await updateProduct();
     if(productResponse) window.location.reload();
 });

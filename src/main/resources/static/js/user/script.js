@@ -1,4 +1,4 @@
-import {makeRequestToBackend} from "../utils/common.js";
+import {makeRequestToBackend, validateFields} from "../utils/common.js";
 
 const tblUsers = document.getElementById("tblUsers");
 
@@ -151,14 +151,19 @@ updateRolesGroup.addEventListener("change", e => {
     const modifiedListOfUpdateUserRoles = modifyUserRoles(e, updateUserRoles);
     updateUserRoles = modifiedListOfUpdateUserRoles;
     console.log(updateUserRoles);
-})
 
+})
 btnSaveNewUser.addEventListener("click", async e => {
+    const inputs = [txtPassword, txtUsername, txtFullName];
+    if(!validateFields(inputs)) return;
     const userResponse = await createUser();
     if(userResponse) window.location.reload();
+
 });
 
 btnSaveChangesUser.addEventListener("click", async e => {
+    const inputs = [txtUpdateUsername, txtUpdateFullName];
+    if(!validateFields(inputs)) return;
     const userResponse = await updateUser();
     if(userResponse) window.location.reload();
 });
