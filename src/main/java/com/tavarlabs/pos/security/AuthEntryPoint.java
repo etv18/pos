@@ -17,9 +17,6 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
             HttpServletResponse response,
             AuthenticationException authException
     ) throws IOException, ServletException {
-        response.sendError(
-                HttpServletResponse.SC_FORBIDDEN,
-                "I don't you who you are so you are not welcome here..."
-        );
+        response.sendRedirect("/auth/unauthorized");
     }
 }
