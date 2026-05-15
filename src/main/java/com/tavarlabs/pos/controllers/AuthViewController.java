@@ -16,4 +16,9 @@ public class AuthViewController {
     public String viewLogin(Model model){
         return "/auth/login";
     }
+
+    @GetMapping("/unauthorized")
+    public String unauthorizedPage() {
+        return "auth/unauthorized";
+    }
 }
