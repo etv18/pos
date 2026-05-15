@@ -176,6 +176,10 @@ btnCreatePurchase.addEventListener('click', async e => {
    if(!checkQuantityValues(tblPurchaseLines, 3)) return;
     const purchaseRequest = createPurchaseRequest(tblPurchaseLines);
     const data = makeRequestToBackend(purchaseEndpoint, purchaseRequest, 'POST');
+    if(data) {
+        tblPurchaseLines.tBodies[0].innerHTML = "";
+        pPurchaseTotal.textContent = ""
+    }
 });
 
 document.addEventListener('input', e => {

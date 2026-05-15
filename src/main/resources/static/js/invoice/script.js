@@ -1,4 +1,4 @@
-import {makeRequestToBackend} from "../utils/common.js";
+import {makeRequestToBackend, cleanTableBody} from "../utils/common.js";
 
 const txtProductCode = document.getElementById("txtProductCode");
 const tblInvoiceLines = document.getElementById("tblInvoiceLines");
@@ -176,6 +176,11 @@ btnCreateInvoice.addEventListener('click', async e => {
    if(!checkQuantityValues(tblInvoiceLines, 3)) return;
     const invoiceRequest = createInvoiceRequest(tblInvoiceLines);
     const data = makeRequestToBackend(invoiceEndpoint, invoiceRequest, 'POST');
+
+    if(data) {
+        tblInvoiceLines.tBodies[0].innerHTML = "";
+        pInvoiceTotal.textContent = ""
+    }
 });
 
 document.addEventListener('input', e => {
