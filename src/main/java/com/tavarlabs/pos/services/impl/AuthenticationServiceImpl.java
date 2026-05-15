@@ -32,7 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
 
-    private final Long jwtExpirationTimeMs = 86400000L;
+    private final Long jwtExpirationTimeMs = 900000L;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -56,6 +56,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 })
                 .toList()
         );
+        claims.put("enabled", userDetails.isEnabled());
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
