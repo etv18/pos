@@ -1,4 +1,4 @@
-import {makeRequestToBackend, cleanTableBody} from "../utils/common.js";
+import {makeRequestToBackend} from "../utils/common.js";
 
 const txtProductCode = document.getElementById("txtProductCode");
 const tblInvoiceLines = document.getElementById("tblInvoiceLines");
