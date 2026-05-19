@@ -25,6 +25,11 @@ import java.util.Map;
 @RestController
 @RequestMapping(path = "/api/v1/auth")
 public class AuthController {
+    private final String ACCESS_TOKEN = "access";
+    private final String REFRESH_TOKEN = "refresh";
+    private final String ACCESS_TOKEN_COOKIE_KEYWORD = "accessToken";
+    private final String REFRESH_TOKEN_COOKIE_KEYWORD = "refreshToken";
+
     private final UserRepository repo;
 
     private final AuthenticationService authenticationService;
@@ -39,11 +44,12 @@ public class AuthController {
                 loginRequest.getPassword()
         );
 
-        String jwt = authenticationService.generateToken(userDetails);
+        String accessJwt = authenticationService.generateToken(userDetails, ACCESS_TOKEN);
+        String refreshJwt = authenticationService.generateToken(userDetails, REFRESH_TOKEN);
         String url = authenticationService.getUrlBasedOnRole(new ArrayList<>(userDetails.getAuthorities()));
 
         AuthResponse authResponse = AuthResponse.builder()
-                .token(jwt)
+                .token(accessJwt)
                 .expiresIn(86400)
                 .url(url)
                 .build();
@@ -56,14 +62,23 @@ public class AuthController {
         * This way I'm able to use thymeleaf and take advantages of its functionalities with no
         * headaches about manually using js to send the token.
          * */
-        ResponseCookie cookie = ResponseCookie.from("token", jwt)
+        ResponseCookie accessTokenCookie = ResponseCookie.from(ACCESS_TOKEN_COOKIE_KEYWORD, accessJwt)
                 .httpOnly(true)
                 .path("/")
                 .sameSite("Lax") // This means: send the cookie in normal navigation, like 'clicks' on links, etc...
-                .maxAge(Duration.ofDays(1))
+                .maxAge(Duration.ofDays(7))
                 .build();
 
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        ResponseCookie refreshTokenCookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_KEYWORD, refreshJwt)
+                .httpOnly(true)
+                .path("/")
+                .sameSite("Lax") // This means: send the cookie in normal navigation, like 'clicks' on links, etc...
+                .maxAge(Duration.ofDays(7))
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
 
         return ResponseEntity.ok(authResponse);
     }
