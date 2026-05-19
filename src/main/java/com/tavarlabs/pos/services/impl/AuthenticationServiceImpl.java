@@ -1,12 +1,11 @@
 package com.tavarlabs.pos.services.impl;
 
 import com.tavarlabs.pos.enums.RoleName;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 
 import com.tavarlabs.pos.services.AuthenticationService;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
 
-    private final Long jwtExpirationTimeMs = 900000L;
+    private final String ACTIVE = "active";
+    private final String ACCESS_TOKEN = "access";
+    private final String REFRESH_TOKEN = "refresh";
+    private final String ACCESS_TOKEN_COOKIE_KEYWORD = "accessToken";
+    private final String REFRESH_TOKEN_COOKIE_KEYWORD = "refreshToken";
+    private final Long ACCESS_JWT_EXP_IN_MS = 2000L;
+    private final Long REFRESH_JWT_EXP_IN_MS = 3000L;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -48,7 +55,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, String tokenType) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", userDetails.getAuthorities().stream()
                 .map(grantedAuthority -> {
@@ -56,21 +63,42 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 })
                 .toList()
         );
-        claims.put("enabled", userDetails.isEnabled());
+        claims.put("type", tokenType);
+        claims.put(ACTIVE, userDetails.isEnabled());
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationTimeMs))
+                .setExpiration(new Date(System.currentTimeMillis() + setJwtExpirationTimeInMs(tokenType)))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     @Override
-    public UserDetails validateToken(String token) {
-        String username = extractUserName(token);
-        List<SimpleGrantedAuthority> authorities = extractAuthorities(token);
-        return new org.springframework.security.core.userdetails.User(username, "", authorities);
+    public UserDetails validateToken(String refreshToken, String accessToken, HttpServletResponse response) {
+        Claims claims = parseJwtToClaims(accessToken);
+
+        Boolean enabled = claims.get(ACTIVE, Boolean.class);
+        if(!enabled) {
+            throw new DisabledException("Your account is disabled, please contact your IT admin.");
+        }
+
+        String username = extractUserName(accessToken);
+        List<SimpleGrantedAuthority> authorities = extractAuthorities(accessToken);
+        UserDetails user = new org.springframework.security.core.userdetails.User(username, "", authorities);
+
+        if(isTokenExpired(accessToken)){
+             user = userDetailsService.loadUserByUsername(username);
+
+            if(isTokenExpired(refreshToken)){
+                refreshToken = generateToken(user, REFRESH_TOKEN);
+                setHttpOnlyCookie(refreshToken, REFRESH_TOKEN_COOKIE_KEYWORD, response);
+            }
+
+            accessToken = generateToken(user, ACCESS_TOKEN);
+            setHttpOnlyCookie(accessToken, ACCESS_TOKEN_COOKIE_KEYWORD, response);
+        }
+        return user;
     }
 
     @Override
@@ -100,13 +128,32 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         * so it wouldn't be sent by him automatically anymore in every request as I
         * set it up in the login method at AuthController class.
         * */
-        ResponseCookie cookie = ResponseCookie.from("token", "")
+        ResponseCookie accessTokenCookie = ResponseCookie.from(ACCESS_TOKEN_COOKIE_KEYWORD, "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+        ResponseCookie refreshTokenCookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_KEYWORD, "")
                 .httpOnly(true)
                 .path("/")
                 .maxAge(0)
                 .build();
 
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+    }
+
+    public boolean isTokenExpired(String token) {
+        try{
+            Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (ExpiredJwtException e) {
+            // Do sth over here later
+        }
+        return false;
     }
 
     private Key getSigningKey(){
@@ -115,23 +162,44 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private String extractUserName(String token){
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        Claims claims = parseJwtToClaims(token);
         return claims.getSubject();
     }
 
     private List<SimpleGrantedAuthority> extractAuthorities(String token){
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        Claims claims = parseJwtToClaims(token);
         List<String> roles = (List<String>) claims.get("roles");
         return roles.stream()
                 .map(r -> new SimpleGrantedAuthority((String) r))
                 .toList();
+    }
+
+    private Claims parseJwtToClaims(String token){
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
+    }
+
+    private Long setJwtExpirationTimeInMs(String tokenType){
+        if(tokenType.equalsIgnoreCase(ACCESS_TOKEN)){
+            return ACCESS_JWT_EXP_IN_MS;
+        }
+        return REFRESH_JWT_EXP_IN_MS;
+    }
+
+    private void setHttpOnlyCookie(String token, String tokenKeyword, HttpServletResponse response){
+        ResponseCookie responseCookie = ResponseCookie.from(tokenKeyword, token)
+                .httpOnly(true)
+                .path("/")
+                .sameSite("Lax") // This means: send the cookie in normal navigation, like 'clicks' on links, etc...
+                .maxAge(Duration.ofDays(7))
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     }
 }
