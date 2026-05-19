@@ -4,7 +4,6 @@ import com.tavarlabs.pos.services.AuthenticationService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -22,6 +20,8 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticationService authenticationService;
     private static final String BEARER_ = "Bearer ";
+    private final String ACCESS_TOKEN_COOKIE_KEYWORD = "accessToken";
+    private final String REFRESH_TOKEN_COOKIE_KEYWORD = "refreshToken";
 
     @Override
     protected void doFilterInternal(
@@ -31,9 +31,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     )
     throws ServletException, IOException {
         try{
-            String token = extractToken(request);
-            if(token != null){
-                UserDetails userDetails = authenticationService.validateToken(token);
+            String accessToken = extractToken(request, ACCESS_TOKEN_COOKIE_KEYWORD);
+            String refreshToken = extractToken(request, REFRESH_TOKEN_COOKIE_KEYWORD);
+            if(accessToken != null && refreshToken != null){
+                UserDetails userDetails = authenticationService.validateToken(refreshToken, accessToken, response);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
@@ -48,11 +49,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             log.warn("Received invalid auth token");
+            e.printStackTrace();
         }
         filterChain.doFilter(request, response); //Important to add this cause it'll need for the next chain of filters
     }
 
-    private String extractToken(HttpServletRequest request){
+    private String extractToken(HttpServletRequest request, String tokenTypeCookieKeyword){
         //Get the token from the header first
         String bearerToken = request.getHeader("Authorization");
         if(bearerToken != null && bearerToken.startsWith(BEARER_))
@@ -61,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         //If the code block above didnt find it try the cookies
         if(request.getCookies() != null)
             for(Cookie cookie : request.getCookies()) {
-                if("token".equals(cookie.getName())) return cookie.getValue();
+                if(tokenTypeCookieKeyword.equals(cookie.getName())) return cookie.getValue();
             }
         return null;
     }
